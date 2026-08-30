@@ -297,9 +297,9 @@ body.ar .why h4{font-family:var(--ar); text-transform:none; letter-spacing:norma
 .spine{position:relative; margin-top:56px}
 .spine .line{position:absolute; inset-inline-start:50%; top:0; bottom:0; width:0; border-inline-start:2px dashed var(--tan); transform:translateX(-50%); opacity:.35}
 .spine .line-fill{position:absolute; inset-inline-start:50%; top:0; width:2px; height:0; background:var(--tan); transform:translateX(-50%); z-index:1}
-.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:18px; height:18px; margin-inline-start:-9px; margin-top:-9px; opacity:0; transition:opacity .3s}
+.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:9px; height:9px; margin-inline-start:-4.5px; margin-top:-4.5px; opacity:0; transition:opacity .3s;
+  background:#F2E3C4; border-radius:50%; box-shadow:0 0 10px 3px rgba(198,169,126,.8)}
 .spine-plane.on{opacity:1}
-.spine-plane svg{width:100%; height:100%; fill:var(--tan); transform:rotate(180deg)}
 .spine-plane::before{content:""; position:absolute; top:-16px; inset-inline-start:50%; width:4px; height:4px; margin-inline-start:-2px; background:var(--tan);
   opacity:.5; box-shadow:0 -12px 0 rgba(177,146,102,.3), 0 -24px 0 rgba(177,146,102,.15)}
 .wp{display:grid; grid-template-columns:1fr 64px 1fr; align-items:center; margin-bottom:26px; position:relative}
@@ -530,6 +530,31 @@ body.gl3d .hero-folio::after{display:none}
   </div>
 </section>
 
+<section class="sec white">
+  <div class="wrap">
+    <span class="barover draw in"></span>
+    <div class="eyebrow" data-ar="أرسل استفسارك">Send an enquiry</div>
+    <h2 class="title" data-ar="أخبرنا عن رحلتك">Tell us about your trip</h2>
+    <div class="ruleunder draw in"></div>
+    <form id="enq" style="margin-top:36px; display:grid; gap:16px; max-width:640px">
+      <label style="display:grid; gap:6px">
+        <span class="mono" style="color:var(--tan-text)" data-ar="الاسم">Name</span>
+        <input id="enqName" required style="border:1px solid var(--line); background:var(--paper); padding:13px 14px; font:inherit; color:var(--charcoal)">
+      </label>
+      <label style="display:grid; gap:6px">
+        <span class="mono" style="color:var(--tan-text)" data-ar="رقم الهاتف">Phone</span>
+        <input id="enqPhone" type="tel" dir="ltr" style="border:1px solid var(--line); background:var(--paper); padding:13px 14px; font:inherit; color:var(--charcoal)">
+      </label>
+      <label style="display:grid; gap:6px">
+        <span class="mono" style="color:var(--tan-text)" data-ar="إلى أين تريد السفر، ومتى؟">Where do you want to travel, and when?</span>
+        <textarea id="enqMsg" rows="4" required style="border:1px solid var(--line); background:var(--paper); padding:13px 14px; font:inherit; color:var(--charcoal); resize:vertical"></textarea>
+      </label>
+      <button type="submit" class="btn btn-solid" style="justify-self:start" data-ar="أرسل عبر واتساب">Send via WhatsApp</button>
+      <p class="mono" style="color:var(--tan-text); font-size:.6rem" data-ar="يفتح واتساب برسالة جاهزة إلى فريقنا، ونردّ خلال دقائق.">Opens WhatsApp with your message ready for our team; we reply within minutes.</p>
+    </form>
+  </div>
+</section>
+
 <section class="sec paper">
   <div class="wrap">
     <span class="barover draw in"></span>
@@ -581,5 +606,18 @@ body.gl3d .hero-folio::after{display:none}
   ap('ar');
   var mt=document.querySelector('[data-navtoggle]'), m=document.getElementById('menu');
   if(mt && m){ mt.addEventListener('click', function(){ m.classList.toggle('open'); }); }
+  var f=document.getElementById('enq');
+  if(f){
+    f.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var name=document.getElementById('enqName').value.trim();
+      var phone=document.getElementById('enqPhone').value.trim();
+      var msg=document.getElementById('enqMsg').value.trim();
+      var text=(l==='ar')
+        ? 'مرحباً، أنا '+name+(phone?' ('+phone+')':'')+'. '+msg
+        : 'Hello, I am '+name+(phone?' ('+phone+')':'')+'. '+msg;
+      window.open('https://wa.me/9647740405070?text='+encodeURIComponent(text), '_blank');
+    });
+  }
 })();
 </script>

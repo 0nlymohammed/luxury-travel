@@ -297,9 +297,9 @@ body.ar .why h4{font-family:var(--ar); text-transform:none; letter-spacing:norma
 .spine{position:relative; margin-top:56px}
 .spine .line{position:absolute; inset-inline-start:50%; top:0; bottom:0; width:0; border-inline-start:2px dashed var(--tan); transform:translateX(-50%); opacity:.35}
 .spine .line-fill{position:absolute; inset-inline-start:50%; top:0; width:2px; height:0; background:var(--tan); transform:translateX(-50%); z-index:1}
-.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:18px; height:18px; margin-inline-start:-9px; margin-top:-9px; opacity:0; transition:opacity .3s}
+.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:9px; height:9px; margin-inline-start:-4.5px; margin-top:-4.5px; opacity:0; transition:opacity .3s;
+  background:#F2E3C4; border-radius:50%; box-shadow:0 0 10px 3px rgba(198,169,126,.8)}
 .spine-plane.on{opacity:1}
-.spine-plane svg{width:100%; height:100%; fill:var(--tan); transform:rotate(180deg)}
 .spine-plane::before{content:""; position:absolute; top:-16px; inset-inline-start:50%; width:4px; height:4px; margin-inline-start:-2px; background:var(--tan);
   opacity:.5; box-shadow:0 -12px 0 rgba(177,146,102,.3), 0 -24px 0 rgba(177,146,102,.15)}
 .wp{display:grid; grid-template-columns:1fr 64px 1fr; align-items:center; margin-bottom:26px; position:relative}

@@ -299,9 +299,9 @@ body.ar .why h4{font-family:var(--ar); text-transform:none; letter-spacing:norma
 .spine{position:relative; margin-top:56px}
 .spine .line{position:absolute; inset-inline-start:50%; top:0; bottom:0; width:0; border-inline-start:2px dashed var(--tan); transform:translateX(-50%); opacity:.35}
 .spine .line-fill{position:absolute; inset-inline-start:50%; top:0; width:2px; height:0; background:var(--tan); transform:translateX(-50%); z-index:1}
-.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:18px; height:18px; margin-inline-start:-9px; margin-top:-9px; opacity:0; transition:opacity .3s}
+.spine-plane{position:absolute; inset-inline-start:50%; top:0; z-index:3; width:9px; height:9px; margin-inline-start:-4.5px; margin-top:-4.5px; opacity:0; transition:opacity .3s;
+  background:#F2E3C4; border-radius:50%; box-shadow:0 0 10px 3px rgba(198,169,126,.8)}
 .spine-plane.on{opacity:1}
-.spine-plane svg{width:100%; height:100%; fill:var(--tan); transform:rotate(180deg)}
 .spine-plane::before{content:""; position:absolute; top:-16px; inset-inline-start:50%; width:4px; height:4px; margin-inline-start:-2px; background:var(--tan);
   opacity:.5; box-shadow:0 -12px 0 rgba(177,146,102,.3), 0 -24px 0 rgba(177,146,102,.15)}
 .wp{display:grid; grid-template-columns:1fr 64px 1fr; align-items:center; margin-bottom:26px; position:relative}
@@ -506,7 +506,7 @@ body.gl3d .hero-folio::after{display:none}
   <div class="maplayer" id="maplayer" aria-hidden="true" dir="ltr"></div>
   <button id="heroswitch" type="button" dir="ltr"></button>
   <figure class="hero-photo grain kb shade" id="heroPhoto">
-    <img src="assets/wing_hi.jpg" alt="The wing of an aircraft over mountains, photographed through a cabin window at dusk" loading="eager">
+    <img src="assets/wing_hi.jpg" alt="The wing of an aircraft over mountains, photographed through a cabin window at dusk" loading="eager" fetchpriority="high">
     <div class="develop"></div>
     <div class="hero-arc" aria-hidden="true">
       <svg viewBox="0 0 420 560" preserveAspectRatio="xMidYMin meet">
@@ -667,7 +667,7 @@ body.gl3d .hero-folio::after{display:none}
     <div class="spine" id="spine">
       <div class="line"></div>
       <div class="line-fill" id="spineFill"></div>
-      <div class="spine-plane" id="spinePlane"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.9 0 1.6.9 1.6 2v5.2l7.4 4.3v1.9l-7.4-2.1v4.7l2 1.4v1.5L12 19.8 8.8 20.6v-1.5l2-1.4v-4.7L3.4 15.4v-1.9l7.4-4.3V4c0-1.1.7-2 1.6-2z"/></svg></div>
+      <div class="spine-plane" id="spinePlane"></div>
 
       <div class="wp l"><div class="node"><span class="num">WP·01</span></div>
         <div class="card own reveal"><div class="code latin-data">SECTOR · AIR</div>
