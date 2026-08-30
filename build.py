@@ -88,7 +88,7 @@ def build_site(main):
     used = set()
 
     def emit(src_html, out_name, meta):
-        html = src_html
+        html = '<!doctype html>\n<html lang="ar" dir="rtl">\n' + src_html
         html = html.replace('{{HEAD_META}}', meta)
         html = html.replace('{{SHARED_STYLE}}', shared_style)
         html = html.replace('{{NAV_SUB}}', nav_sub)
