@@ -67,9 +67,7 @@ def build_site(main):
 
     shutil.copy(os.path.join(HERE, 'vendor', 'three.min.js'), os.path.join(DOCS, 'vendor'))
     write(os.path.join(DOCS, 'vendor', 'geo.js'),
-          'window.__LAND=%s;window.__LANDPOLYS=%s;' % (
-              read(os.path.join(HERE, 'land_dots.json')).strip(),
-              read(os.path.join(HERE, 'land_polys.json')).strip()))
+          'window.__LAND=%s;' % read(os.path.join(HERE, 'land_dots.json')).strip())
 
     try:
         from PIL import Image
@@ -95,7 +93,7 @@ def build_site(main):
         html = html.replace('{{FOOTER}}', footer)
         html = html.replace('{{WA}}', wa)
         html = html.replace('<script>{{THREE_JS}}</script>', '<script src="vendor/three.min.js"></script>')
-        html = re.sub(r'<script>window\.__LAND=\{\{LAND_DOTS\}\};window\.__LANDPOLYS=\{\{LAND_POLYS\}\};</script>',
+        html = re.sub(r'<script>window\.__LAND=\{\{LAND_DOTS\}\};[^<]*</script>',
                       '<script src="vendor/geo.js"></script>', html)
         for name in img_tokens(html):
             p = asset_path(name)

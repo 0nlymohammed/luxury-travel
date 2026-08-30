@@ -448,22 +448,6 @@ body.gl3d .hero-photo{display:none}
 body.gl3d .gl-cap{display:block}
 body.gl3d .ignite{display:block; position:absolute; top:10.5%; inset-inline:0; text-align:center; z-index:5;
   font-family:var(--mono); font-size:.7rem; letter-spacing:.32em; color:var(--tan-lift); text-transform:uppercase}
-.maplayer{position:absolute; inset:0; z-index:2; pointer-events:none; display:none}
-body.gl3d .maplayer{display:block}
-.maplayer .mpt{position:absolute; font-family:var(--mono); font-size:.58rem; letter-spacing:.14em; color:rgba(198,169,126,.85); transform:translate(-50%,-160%)}
-.maplayer .fxlayer{position:absolute; inset:0; width:100%; height:100%}
-.maplayer .mpt{transition:color .4s, text-shadow .4s}
-.maplayer .mpt.lit{color:#F2E3C4; text-shadow:0 0 10px rgba(198,169,126,.95)}
-body.globemode .maplayer{display:none}
-#heroswitch{position:absolute; z-index:6; bottom:clamp(14px,2.4vw,26px); inset-inline-end:clamp(14px,2.4vw,26px); display:none;
-  font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(198,169,126,.75);
-  background:transparent; border:1px solid rgba(198,169,126,.35); padding:7px 11px; cursor:pointer; transition:.2s}
-#heroswitch:hover{color:var(--ink-gold); background:var(--tan); border-color:var(--tan)}
-body.gl3d #heroswitch{display:block}
-.maplayer .pulse{position:absolute; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; background:var(--tan-lift); border-radius:50%}
-.maplayer .pulse::after{content:""; position:absolute; inset:-7px; border:1px solid var(--tan-lift); border-radius:50%; animation:mappulse 2.4s ease-out infinite}
-@keyframes mappulse{0%{transform:scale(.35); opacity:.9} 100%{transform:scale(2.3); opacity:0}}
-@media (prefers-reduced-motion:reduce){ .maplayer .pulse::after{animation:none; opacity:.35} .maplayer .fxlayer{display:none} }
 body.gl3d .hero-panel{position:absolute; z-index:5; inset-inline:0; top:auto; bottom:clamp(18px,4vh,44px);
   width:min(920px,94%); margin-inline:auto; background:transparent; border:none; padding:0;
   display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:flex-start}
@@ -484,9 +468,7 @@ body.gl3d .hero-folio::after{display:none}
   body.gl3d .cta-row{gap:10px}
   body.gl3d .cta-row .btn{padding:12px 16px; font-size:.76rem}
   body.gl3d .hero-folio{font-size:.52rem; letter-spacing:.14em; margin-top:10px}
-  .maplayer .mpt{font-size:.5rem}
-  #heroswitch{top:14px; bottom:auto; inset-inline-end:14px}
-}
+    }
 </style>
 
 <!-- ================= NAV ================= -->
@@ -514,8 +496,6 @@ body.gl3d .hero-folio::after{display:none}
 <!-- ================= HERO ================= -->
 <section class="hero" id="hero">
   <canvas id="gl" aria-hidden="true"></canvas>
-  <div class="maplayer" id="maplayer" aria-hidden="true" dir="ltr"></div>
-  <button id="heroswitch" type="button" dir="ltr"></button>
   <figure class="hero-photo grain kb shade" id="heroPhoto">
     <img src="assets/wing_hi.jpg" alt="The wing of an aircraft over mountains, photographed through a cabin window at dusk" loading="eager" fetchpriority="high">
     <div class="develop"></div>
@@ -1054,8 +1034,7 @@ body.gl3d .hero-folio::after{display:none}
   try{ renderer=new THREE.WebGLRenderer({canvas:canvas, antialias:!MOBILE}); }catch(e){ return; }
   window.__moltenHero = true;
   document.body.classList.add('gl3d');
-  var GLOBE = (location.hash||'').indexOf('globe')>=0;
-  if(GLOBE) document.body.classList.add('globemode');
+  var GLOBE = true;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, MOBILE?1.15:1.5));
 
   /* honest route math: computed, never typed */
@@ -1087,9 +1066,6 @@ body.gl3d .hero-folio::after{display:none}
     uLight:{value:new THREE.Vector3(.3,.5,.8)},
     uCool:{value:0},
     uMask:{value:null},
-    uMapT:{value:null},
-    uMapI:{value: GLOBE ? 0 : .5},
-    uBgA:{value: GLOBE ? 0 : 1},
     uPour:{value:new Float32Array(8)}
   };
   var NL=String.fromCharCode(10);
@@ -1098,7 +1074,7 @@ body.gl3d .hero-folio::after{display:none}
   'precision highp float;',
   'varying vec2 vUv;',
   'uniform float uTime; uniform vec2 uRes; uniform vec3 uLight; uniform float uCool;',
-  'uniform sampler2D uMask; uniform sampler2D uMapT; uniform float uMapI; uniform float uBgA; uniform float uPour[8];',
+  'uniform sampler2D uMask; uniform float uPour[8];',
   'float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }',
   'float noise(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.-2.*f);',
   '  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }',
@@ -1111,8 +1087,7 @@ body.gl3d .hero-folio::after{display:none}
   '  vec4 m=texture2D(uMask,uv);',
   '  vec3 charcoal=vec3(.1255);',
   '  float cov=m.r;',
-  '  vec3 mapc=texture2D(uMapT,uv).rgb*uMapI*(1.-uCool*.85);',
-  '  if(cov<.004){ gl_FragColor=vec4(charcoal+mapc, uBgA); return; }',
+  '  if(cov<.004){ gl_FragColor=vec4(charcoal, 0.); return; }',
   '  float li=floor(m.g/max(cov,.001)*255.+.5);',
   '  float yb=m.b;',
   '  float p=1.;',
@@ -1141,8 +1116,7 @@ body.gl3d .hero-folio::after{display:none}
   '  col+=goldB*edge*.5*inside;',
   '  vec3 outc=mix(charcoal, col, cov*inside);',
   '  outc=mix(outc, charcoal+vec3(.035,.03,.02), cov*(1.-inside)*.5);',
-  '  float av = max(uBgA, cov);',
-  '  gl_FragColor=vec4(outc+mapc*(1.-cov*inside)*step(cov,.5), av);',
+  '  gl_FragColor=vec4(outc, cov);',
   '}'].join(NL);
   var mat=new THREE.ShaderMaterial({uniforms:uniforms, vertexShader:vert, fragmentShader:frag, transparent:true});
   scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), mat));
@@ -1203,165 +1177,19 @@ body.gl3d .hero-folio::after{display:none}
     pourN=letters.length;
   }
 
-  /* ---- the atlas: real coastlines + route network + destination labels ---- */
-  var routes=[], endPts=[], labelEls=[], fx=null, fxx=null;
+
+
+  /* ---- sphere math ---- */
   function ll2v(la,lo){ la=toRad(la); lo=toRad(lo);
     return [Math.cos(la)*Math.cos(lo), Math.sin(la), Math.cos(la)*Math.sin(lo)]; }
-  function v2ll(v){ return [Math.asin(Math.max(-1,Math.min(1,v[1])))*180/Math.PI, Math.atan2(v[2],v[0])*180/Math.PI]; }
   function slerpv(a,b,t){
     var d=Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]));
     var th=Math.acos(d), s=Math.sin(th)||1e-6;
     var w1=Math.sin((1-t)*th)/s, w2=Math.sin(t*th)/s;
     return [a[0]*w1+b[0]*w2, a[1]*w1+b[1]*w2, a[2]*w1+b[2]*w2];
   }
-  function buildMap(){
-    if(GLOBE) return;
-    var r=hero.getBoundingClientRect(), W=Math.max(2,Math.floor(r.width)), H=Math.max(2,Math.floor(r.height));
-    var c=document.createElement('canvas'); c.width=W; c.height=H;
-    var x=c.getContext('2d');
-    var mw=W*1.04, mh=mw/2, ox=(W-mw)/2, oy=H*.46-mh/2;
-    function px(lo,la){ return [ox+(lo+180)/360*mw, oy+(90-la)/180*mh]; }
-    var dots=window.__LAND||[];
-    x.fillStyle='rgba(198,169,126,.45)';
-    for(var i=0;i<dots.length;i++){
-      var p=px(dots[i][0],dots[i][1]);
-      x.fillRect(p[0],p[1],1.3,1.3);
-    }
-    var polys=window.__LANDPOLYS||[];
-    x.strokeStyle='rgba(198,169,126,.55)'; x.lineWidth=.9;
-    for(var pi=0;pi<polys.length;pi++){
-      var rings=polys[pi];
-      for(var ri=0;ri<rings.length;ri++){
-        var ring=rings[ri];
-        x.beginPath();
-        var prevLon=null;
-        for(var k=0;k<ring.length;k++){
-          var lon=ring[k][0];
-          var rp=px(lon,ring[k][1]);
-          if(k===0 || (prevLon!==null && Math.abs(lon-prevLon)>180)) x.moveTo(rp[0],rp[1]);
-          else x.lineTo(rp[0],rp[1]);
-          prevLon=lon;
-        }
-        x.stroke();
-      }
-    }
-    var A=ll2v(BGW[0],BGW[1]);
-    routes=[]; endPts=[];
-    x.setLineDash([3,7]); x.lineWidth=1; x.strokeStyle='rgba(198,169,126,.30)';
-    for(var d=0;d<DESTS.length;d++){
-      var Bv=ll2v(DESTS[d][1],DESTS[d][2]);
-      var pts=[];
-      x.beginPath();
-      for(var j=0;j<=64;j++){
-        var ll=v2ll(slerpv(A,Bv,j/64));
-        var q=px(ll[1],ll[0]);
-        pts.push(q);
-        if(j===0) x.moveTo(q[0],q[1]); else x.lineTo(q[0],q[1]);
-      }
-      x.stroke();
-      routes.push(pts);
-      endPts.push(pts[pts.length-1]);
-    }
-    x.setLineDash([]);
-    var g2=x.createLinearGradient(0,H*.52,0,H*.92);
-    g2.addColorStop(0,'rgba(0,0,0,0)'); g2.addColorStop(1,'rgba(0,0,0,.94)');
-    x.globalCompositeOperation='destination-out';
-    x.fillStyle=g2; x.fillRect(0,H*.52,W,H*.48);
-    x.globalCompositeOperation='source-over';
-    var tex=new THREE.CanvasTexture(c);
-    tex.minFilter=THREE.LinearFilter; tex.magFilter=THREE.LinearFilter;
-    if(uniforms.uMapT.value) uniforms.uMapT.value.dispose();
-    uniforms.uMapT.value=tex;
-    var ml=document.getElementById('maplayer');
-    if(ml){
-      ml.innerHTML='';
-      function mk(cls,p,txt){
-        var el=document.createElement(txt?'span':'i'); el.className=cls;
-        el.style.left=p[0]+'px'; el.style.top=p[1]+'px';
-        if(txt) el.textContent=txt;
-        ml.appendChild(el); return el;
-      }
-      var pb=px(BGW[1],BGW[0]);
-      mk('pulse',pb); mk('mpt',pb,'BGW');
-      labelEls=[];
-      for(var di=0;di<DESTS.length;di++){
-        labelEls.push(mk('mpt',endPts[di],DESTS[di][0]));
-      }
-      fx=document.createElement('canvas');
-      fx.className='fxlayer'; fx.width=W; fx.height=H;
-      ml.appendChild(fx);
-      fxx=fx.getContext('2d');
-    }
-  }
 
-  /* ---- living routes: light draw + pin drop (map variant) ---- */
-  var LEGDUR=6.2, curLeg=-1;
-  function easeO(x){ return 1-Math.pow(1-x,3); }
-  function drawPin(x2,cx,cy,s,a){
-    x2.save();
-    x2.globalAlpha=a;
-    x2.translate(cx,cy); x2.scale(s,s);
-    x2.beginPath();
-    x2.arc(0,-13,8.5,Math.PI*.93,Math.PI*.07);
-    x2.quadraticCurveTo(6.5,-4,0,2);
-    x2.quadraticCurveTo(-6.5,-4,-8.4,-11.9);
-    x2.closePath();
-    x2.fillStyle='#C6A97E'; x2.fill();
-    x2.lineWidth=1.1; x2.strokeStyle='#8A6F47'; x2.stroke();
-    x2.beginPath(); x2.arc(0,-13,3.3,0,7);
-    x2.fillStyle='#20201C'; x2.fill();
-    x2.restore();
-  }
-  function drawRoutesFx(t){
-    if(!fxx||!routes.length) return;
-    var W=fx.width, H=fx.height;
-    fxx.clearRect(0,0,W,H);
-    var leg=Math.floor(t/LEGDUR)%routes.length;
-    if(leg!==curLeg){
-      if(curLeg>=0 && labelEls[curLeg]) labelEls[curLeg].classList.remove('lit');
-      curLeg=leg; setFolio(leg);
-    }
-    var tau=t-Math.floor(t/LEGDUR)*LEGDUR;
-    var layerA = tau>LEGDUR-.9 ? (LEGDUR-tau)/.9 : 1;
-    var pts=routes[leg];
-    var p=easeO(Math.min(tau/2.3,1));
-    var n=Math.max(2,Math.floor(p*(pts.length-1))+1);
-    fxx.save();
-    fxx.globalAlpha=layerA;
-    fxx.lineWidth=2; fxx.lineCap='round';
-    fxx.strokeStyle='rgba(198,169,126,.9)';
-    fxx.shadowColor='rgba(198,169,126,.9)'; fxx.shadowBlur=6;
-    fxx.beginPath();
-    for(var i=0;i<n;i++){ if(i===0) fxx.moveTo(pts[0][0],pts[0][1]); else fxx.lineTo(pts[i][0],pts[i][1]); }
-    fxx.stroke();
-    if(p<1){
-      var hd=pts[n-1];
-      fxx.shadowBlur=16;
-      fxx.fillStyle='#F2E3C4';
-      fxx.beginPath(); fxx.arc(hd[0],hd[1],3.4,0,7); fxx.fill();
-    } else {
-      var end=pts[pts.length-1];
-      var dd=Math.min((tau-2.3)/.5,1);
-      var db=easeO(dd);
-      drawPin(fxx, end[0], end[1]-(1-db)*26, .95, dd);
-      if(labelEls[leg]) labelEls[leg].classList.add('lit');
-      var rt=tau-2.3;
-      if(rt<1.1){
-        fxx.shadowBlur=0;
-        fxx.beginPath(); fxx.arc(end[0],end[1],4+rt*26,0,7);
-        fxx.strokeStyle='rgba(198,169,126,'+(0.7*(1-rt/1.1))+')';
-        fxx.lineWidth=1.4; fxx.stroke();
-      }
-    }
-    fxx.restore();
-    if(gMaskCanvas){
-      fxx.globalCompositeOperation='destination-out';
-      fxx.drawImage(gMaskCanvas,0,0);
-      fxx.globalCompositeOperation='source-over';
-    }
-  }
-
-  /* ---- rotating golden Earth (globe variant) ---- */
+  /* ---- rotating golden Earth (the signature) ---- */
   var globeScene=null, globeCam=null, globeGrp=null;
   function buildGlobe(){
     if(!GLOBE) return;
@@ -1407,7 +1235,6 @@ body.gl3d .hero-folio::after{display:none}
     uniforms.uRes.value.set(r.width, r.height);
     if(globeCam){ globeCam.aspect=r.width/Math.max(r.height,1); globeCam.updateProjectionMatrix(); }
     buildMask();
-    buildMap();
   }
 
   var tx=0,ty=0,mx=0,my=0,lastMove=-1e9;
@@ -1458,10 +1285,6 @@ body.gl3d .hero-folio::after{display:none}
       renderer.clear();
       renderer.render(globeScene, globeCam);
       renderer.render(scene, cam);
-    } else {
-      renderer.autoClear=true;
-      renderer.render(scene, cam);
-      drawRoutesFx(t);
     }
   }
   function renderStill(){
@@ -1485,14 +1308,6 @@ body.gl3d .hero-folio::after{display:none}
   document.querySelectorAll('[data-langtoggle]').forEach(function(b){
     b.addEventListener('click', function(){ setTimeout(function(){ buildMask(); if(reduce) renderStill(); }, 340); });
   });
-  var sw=document.getElementById('heroswitch');
-  if(sw){
-    sw.textContent = GLOBE ? '⇄ MAP VIEW' : '⇄ GLOBE VIEW';
-    sw.addEventListener('click', function(){
-      location.hash = GLOBE ? '' : '#globe';
-      location.reload();
-    });
-  }
   if(reduce){ renderStill(); }
   else requestAnimationFrame(frame);
   requestAnimationFrame(function(){ canvas.classList.add('on'); });

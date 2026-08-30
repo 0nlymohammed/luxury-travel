@@ -446,22 +446,6 @@ body.gl3d .hero-photo{display:none}
 body.gl3d .gl-cap{display:block}
 body.gl3d .ignite{display:block; position:absolute; top:10.5%; inset-inline:0; text-align:center; z-index:5;
   font-family:var(--mono); font-size:.7rem; letter-spacing:.32em; color:var(--tan-lift); text-transform:uppercase}
-.maplayer{position:absolute; inset:0; z-index:2; pointer-events:none; display:none}
-body.gl3d .maplayer{display:block}
-.maplayer .mpt{position:absolute; font-family:var(--mono); font-size:.58rem; letter-spacing:.14em; color:rgba(198,169,126,.85); transform:translate(-50%,-160%)}
-.maplayer .fxlayer{position:absolute; inset:0; width:100%; height:100%}
-.maplayer .mpt{transition:color .4s, text-shadow .4s}
-.maplayer .mpt.lit{color:#F2E3C4; text-shadow:0 0 10px rgba(198,169,126,.95)}
-body.globemode .maplayer{display:none}
-#heroswitch{position:absolute; z-index:6; bottom:clamp(14px,2.4vw,26px); inset-inline-end:clamp(14px,2.4vw,26px); display:none;
-  font-family:var(--mono); font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(198,169,126,.75);
-  background:transparent; border:1px solid rgba(198,169,126,.35); padding:7px 11px; cursor:pointer; transition:.2s}
-#heroswitch:hover{color:var(--ink-gold); background:var(--tan); border-color:var(--tan)}
-body.gl3d #heroswitch{display:block}
-.maplayer .pulse{position:absolute; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; background:var(--tan-lift); border-radius:50%}
-.maplayer .pulse::after{content:""; position:absolute; inset:-7px; border:1px solid var(--tan-lift); border-radius:50%; animation:mappulse 2.4s ease-out infinite}
-@keyframes mappulse{0%{transform:scale(.35); opacity:.9} 100%{transform:scale(2.3); opacity:0}}
-@media (prefers-reduced-motion:reduce){ .maplayer .pulse::after{animation:none; opacity:.35} .maplayer .fxlayer{display:none} }
 body.gl3d .hero-panel{position:absolute; z-index:5; inset-inline:0; top:auto; bottom:clamp(18px,4vh,44px);
   width:min(920px,94%); margin-inline:auto; background:transparent; border:none; padding:0;
   display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:flex-start}
@@ -482,9 +466,7 @@ body.gl3d .hero-folio::after{display:none}
   body.gl3d .cta-row{gap:10px}
   body.gl3d .cta-row .btn{padding:12px 16px; font-size:.76rem}
   body.gl3d .hero-folio{font-size:.52rem; letter-spacing:.14em; margin-top:10px}
-  .maplayer .mpt{font-size:.5rem}
-  #heroswitch{top:14px; bottom:auto; inset-inline-end:14px}
-}
+    }
 </style>
 <style>
 .pagehero{background:var(--charcoal); padding-block:clamp(56px,8vw,100px)}
