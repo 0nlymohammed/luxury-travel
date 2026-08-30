@@ -466,6 +466,17 @@ body.gl3d .hero-sub{max-width:58ch; margin-top:8px; font-size:.92rem}
 body.gl3d .cta-row{justify-content:center; margin-top:16px}
 body.gl3d .hero-folio{position:static; margin-top:14px}
 body.gl3d .hero-folio::after{display:none}
+@media(max-width:880px){
+  body.gl3d .hero{min-height:calc(100svh - 70px)}
+  body.gl3d .hero-panel{width:94%; bottom:30px}
+  body.gl3d .hero-head{font-size:1.2rem}
+  body.gl3d .hero-sub{font-size:.84rem; max-width:100%}
+  body.gl3d .cta-row{gap:10px}
+  body.gl3d .cta-row .btn{padding:12px 16px; font-size:.76rem}
+  body.gl3d .hero-folio{font-size:.52rem; letter-spacing:.14em; margin-top:10px}
+  .maplayer .mpt{font-size:.5rem}
+  #heroswitch{top:14px; bottom:auto; inset-inline-end:14px}
+}
 </style>
 
 <!-- ================= NAV ================= -->
@@ -1028,16 +1039,16 @@ body.gl3d .hero-folio::after{display:none}
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!window.THREE) return;
-  if(window.innerWidth < 881) return;
+  var MOBILE = window.innerWidth < 881;
   var canvas=document.getElementById('gl'), hero=document.getElementById('hero');
   if(!canvas||!hero) return;
   var renderer;
-  try{ renderer=new THREE.WebGLRenderer({canvas:canvas, antialias:true}); }catch(e){ return; }
+  try{ renderer=new THREE.WebGLRenderer({canvas:canvas, antialias:!MOBILE}); }catch(e){ return; }
   window.__moltenHero = true;
   document.body.classList.add('gl3d');
   var GLOBE = (location.hash||'').indexOf('globe')>=0;
   if(GLOBE) document.body.classList.add('globemode');
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, MOBILE?1.15:1.5));
 
   /* honest route math: computed, never typed */
   function toRad(d){ return d*Math.PI/180; }
@@ -1136,13 +1147,20 @@ body.gl3d .hero-folio::after{display:none}
     var x=c1.getContext('2d');
     var arMode=document.body.classList.contains('ar');
     var word = arMode ? 'الفخامة' : 'LUXURY';
-    var fs = arMode ? Math.min(W*.235, H*.40) : Math.min(W*.145, H*.42);
+    var fs = arMode ? Math.min(W*(MOBILE?.31:.235), H*.40) : Math.min(W*(MOBILE?.17:.145), H*.42);
     x.font=(arMode?'900 ':'600 ')+fs+'px '+(arMode?'Cairo, sans-serif':'"Cormorant Garamond", Georgia, serif');
     x.textBaseline='alphabetic';
     var letters = arMode ? [word] : word.split('');
     var track = arMode ? 0 : fs*.10;
     var widths=letters.map(function(ch){ return x.measureText(ch).width; });
     var total=widths.reduce(function(a,b){ return a+b; },0)+track*(letters.length-1);
+    if(total > W*.92){
+      fs = fs*W*.92/total;
+      x.font=(arMode?'900 ':'600 ')+fs+'px '+(arMode?'Cairo, sans-serif':'"Cormorant Garamond", Georgia, serif');
+      track = arMode ? 0 : fs*.10;
+      widths=letters.map(function(ch){ return x.measureText(ch).width; });
+      total=widths.reduce(function(a,b){ return a+b; },0)+track*(letters.length-1);
+    }
     var startX=(W-total)/2, baseY=H*.485;
     var top=baseY-fs*.74, bot=baseY+fs*.06;
     var cx=startX;
