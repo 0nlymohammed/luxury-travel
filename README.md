@@ -1,4 +1,4 @@
-# LUXURY Travel & Tourism, website prototype (Phase 0, v11)
+# LUXURY Travel & Tourism, website prototype (v12, deployed)
 
 High-fidelity single-page design prototype for the LUXURY Travel and Tourism homepage. Follows the printed company profile (`COMPANY PROFILE LUXURY.pdf`). v5 replaces the hero with MOLTEN LETTERPRESS: the wordmark die-cut at monumental scale through the charcoal, filled with living molten gold rendered by a GLSL shader (Three.js fullscreen quad). Each letter pours in like a film title with a glowing liquid meniscus; the cursor acts as the gallery light (with an idle auto-orbit); scrolling out cools the gold toward charcoal. The Arabic toggle rebuilds the monument as an equal Arabic word (Cairo 900). The folio route line (BGW to ATH, km and heading) is COMPUTED from coordinates at runtime, never typed.
 
@@ -17,6 +17,14 @@ Live preview (private artifact): https://claude.ai/code/artifact/d87e6a9f-0ffc-4
 - Type (Google Fonts): Cormorant Garamond (wordmark, headlines, numerals), Archivo 800 (grotesque titles), IBM Plex Sans (body), Cairo (Arabic), IBM Plex Mono (coordinates, plate captions, data).
 - Photo system: every image is a REAL photograph from the profile, treated one of two ways per the printed identity: full-bleed off a viewport edge, or matted in a white inset frame on a solid field. Gold duotone on dark bands only; the coast and resort stay natural (their color is the product). Mono plate captions throughout. Film-grain overlay on photographic surfaces only. No drawn objects, no mockups, no gradients, no shadows, zero border-radius.
 - Bilingual: English default, Arabic RTL toggle (Cairo, mirrored layout, phone numbers and digits stay Latin).
+
+## Deployment (v12)
+
+- LIVE: https://0nlymohammed.github.io/luxury-travel/ (GitHub Pages, repo 0nlymohammed/luxury-travel, served from /docs on main).
+- The site is now multi-page: index.html (full homepage), services.html (the eight services in detail), contact.html (contact spread + map embed), with shared nav/footer, external cached assets, SEO/OG meta, favicon, Arabic default.
+- Build: python build.py produces BOTH luxury-travel.html (single-file preview) and docs/ (deployable site). Subpages are generated from services.template.html / contact.template.html and inherit the main template's stylesheet, nav and footer automatically.
+- VERCEL: a production deployment was created (project luxury-travel-site, account oldmohamm) but the account returns 402 DEPLOYMENT_DISABLED, an account/billing-level block. To use Vercel: log into vercel.com, resolve the billing/pause notice on the account, then run "npx vercel deploy --prod" in this folder (or redeploy from the dashboard). Also disable Deployment Protection in project settings if preview URLs should be public.
+- CUSTOM DOMAIN (luxury-travel.net): on GitHub, repo Settings > Pages > Custom domain = luxury-travel.net, then at the domain registrar point an ALIAS/A record to GitHub Pages IPs (185.199.108-111.153) or CNAME www to 0nlymohammed.github.io, and enable Enforce HTTPS.
 
 ## v11 highlights
 
